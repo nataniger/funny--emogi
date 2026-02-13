@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+<meta charset="UTF-8">
+<title>Emoji Animal Fusion Lab 🐵🔥</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial Black, sans-serif;
+  text-align: center;
+  color: white;
+  background: url("https://i.imgur.com/2HPKOK7.jpg") no-repeat center center fixed;
+  background-size: cover;
+}
+
+h1 {
+  margin-top: 20px;
+  font-size: 3em;
+  text-shadow: 3px 3px 15px black;
+  animation: float 3s infinite ease-in-out;
+}
+
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.emoji-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 65px);
+  gap: 15px;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.emoji {
+  font-size: 2em;
+  cursor: pointer;
+  padding: 12px;
+  border-radius: 15px;
+  background: rgba(0,0,0,0.5);
+  transition: 0.3s;
+}
+
+.emoji:hover {
+  transform: scale(1.25) rotate(8deg);
+  background: lime;
+}
+
+button {
+  margin-top: 30px;
+  padding: 15px 35px;
+  font-size: 1.5em;
+  border-radius: 25px;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(45deg, orange, red);
+  color: white;
+  transition: 0.3s;
+}
+
+button:hover {
+  transform: scale(1.1);
+}
+
+#result {
+  margin-top: 40px;
+}
+
+#resultImage {
+  max-width: 450px;
+  border-radius: 25px;
+  box-shadow: 0 0 25px black;
+  animation: pop 0.5s ease;
+}
+
+@keyframes pop {
+  from { transform: scale(0.6); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.rare-effect {
+  animation: flash 0.6s ease-in-out 3;
+}
+
+@keyframes flash {
+  0% { background-color: rgba(255,0,0,0.3); }
+  50% { background-color: rgba(255,255,0,0.6); }
+  100% { background-color: transparent; }
+}
+</style>
+</head>
+
+<body>
+
+<h1>🐵 Emoji Animal Fusion Lab 🧪🔥</h1>
+
+<div class="emoji-grid" id="emojiGrid"></div>
+
+<button onclick="generateImage()">צור קומבו 🧨</button>
+
+<div id="result">
+  <img id="resultImage" />
+</div>
+
+<script>
+const emojis = ["🐶","🐱","🐵","🕶️","👑","🔥","🎸"];
+
+const imageDatabase = {
+  "🐶": [
+    "https://i.imgur.com/2HPKOK7.jpg"
+  ],
+  "🐱": [
+    "https://i.imgur.com/phSfk2W.jpg"
+  ],
+  "🐶+🎸": [
+    "https://i.imgur.com/6Uw6HWF.jpg"
+  ],
+  "🐵": [
+    "https://i.imgur.com/oI4X50w.jpg"
+  ],
+  "RARE_MONKEY": [
+    "https://i.imgur.com/Z2Zy2FC.jpg"
+  ]
+};
+
+const grid = document.getElementById("emojiGrid");
+let selected = [];
+
+emojis.forEach(e => {
+  const div = document.createElement("div");
+  div.className = "emoji";
+  div.textContent = e;
+  div.onclick = () => {
+    if (!selected.includes(e)) {
+      selected.push(e);
+      div.style.background = "gold";
+    }
+  };
+  grid.appendChild(div);
+});
+
+function generateImage() {
+  if (selected.length === 0) {
+    alert("בחר לפחות אימוג'י אחד 😅");
+    return;
+  }
+
+  const key = selected.sort().join("+");
+  let images;
+  let rare = false;
+
+  if (imageDatabase[key]) {
+    images = imageDatabase[key];
+    rare = true;
+  } else if (imageDatabase[selected[0]]) {
+    images = imageDatabase[selected[0]];
+  } else {
+    images = imageDatabase["🐶"];
+  }
+
+  if (Math.random() < 0.15) {
+    images = imageDatabase["RARE_MONKEY"];
+    rare = true;
+  }
+
+  const randomImage = images[Math.floor(Math.random() * images.length)];
+  const img = document.getElementById("resultImage");
+  img.src = randomImage;
+
+  if (rare) {
+    document.body.classList.add("rare-effect");
+    setTimeout(() => document.body.classList.remove("rare-effect"), 1800);
+    speakChinese("超级稀有组合!");
+  } else {
+    speakChinese("哈哈 太搞笑了");
+  }
+
+  selected = [];
+  document.querySelectorAll(".emoji").forEach(e =>
+    e.style.background = "rgba(0,0,0,0.5)"
+  );
+}
+
+function speakChinese(text) {
+  const msg = new SpeechSynthesisUtterance(text);
+  msg.lang = "zh-CN";
+  msg.pitch = 1.4;
+  msg.rate = 1;
+  speechSynthesis.speak(msg);
+}
+</script>
+
+</body>
+</html>
