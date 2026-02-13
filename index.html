@@ -2,194 +2,174 @@
 <html lang="he">
 <head>
 <meta charset="UTF-8">
-<title>Emoji Animal Fusion Lab 🐵🔥</title>
+<title>האתר המצחיק של נתי 😂</title>
 
 <style>
-body {
-  margin: 0;
-  font-family: Arial Black, sans-serif;
-  text-align: center;
-  color: white;
-  background: url("https://i.imgur.com/2HPKOK7.jpg") no-repeat center center fixed;
-  background-size: cover;
+body{
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:linear-gradient(-45deg,#ff9a9e,#fad0c4,#fbc2eb,#a18cd1);
+    background-size:400% 400%;
+    animation:bgMove 12s infinite alternate;
+    text-align:center;
+    color:#222;
 }
 
-h1 {
-  margin-top: 20px;
-  font-size: 3em;
-  text-shadow: 3px 3px 15px black;
-  animation: float 3s infinite ease-in-out;
+@keyframes bgMove{
+    0%{background-position:0% 50%}
+    100%{background-position:100% 50%}
 }
 
-@keyframes float {
-  0%,100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+h1{
+    margin-top:20px;
+    font-size:40px;
 }
 
-.emoji-grid {
-  display: grid;
-  grid-template-columns: repeat(6, 65px);
-  gap: 15px;
-  justify-content: center;
-  margin-top: 30px;
+#gallery{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+    gap:15px;
+    padding:20px;
 }
 
-.emoji {
-  font-size: 2em;
-  cursor: pointer;
-  padding: 12px;
-  border-radius: 15px;
-  background: rgba(0,0,0,0.5);
-  transition: 0.3s;
+.card{
+    background:white;
+    border-radius:15px;
+    padding:10px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.2);
+    transition:0.3s;
 }
 
-.emoji:hover {
-  transform: scale(1.25) rotate(8deg);
-  background: lime;
+.card:hover{
+    transform:scale(1.1) rotate(3deg);
 }
 
-button {
-  margin-top: 30px;
-  padding: 15px 35px;
-  font-size: 1.5em;
-  border-radius: 25px;
-  border: none;
-  cursor: pointer;
-  background: linear-gradient(45deg, orange, red);
-  color: white;
-  transition: 0.3s;
+.card img{
+    width:100%;
+    border-radius:10px;
 }
 
-button:hover {
-  transform: scale(1.1);
+textarea{
+    width:80%;
+    height:80px;
+    border-radius:10px;
+    padding:10px;
+    font-size:18px;
+    margin-top:20px;
 }
 
-#result {
-  margin-top: 40px;
+button{
+    padding:12px 20px;
+    margin:10px;
+    border:none;
+    border-radius:10px;
+    font-size:18px;
+    cursor:pointer;
+    background:#ffcc00;
+    transition:0.3s;
 }
 
-#resultImage {
-  max-width: 450px;
-  border-radius: 25px;
-  box-shadow: 0 0 25px black;
-  animation: pop 0.5s ease;
+button:hover{
+    transform:scale(1.1);
+    background:#ff9900;
 }
 
-@keyframes pop {
-  from { transform: scale(0.6); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
+#counter{
+    font-size:20px;
+    margin:15px;
 }
 
-.rare-effect {
-  animation: flash 0.6s ease-in-out 3;
-}
-
-@keyframes flash {
-  0% { background-color: rgba(255,0,0,0.3); }
-  50% { background-color: rgba(255,255,0,0.6); }
-  100% { background-color: transparent; }
-}
 </style>
 </head>
 
 <body>
 
-<h1>🐵 Emoji Animal Fusion Lab 🧪🔥</h1>
+<h1>🤣 האתר המצחיק והחמוד של נתי 🐶</h1>
 
-<div class="emoji-grid" id="emojiGrid"></div>
+<div id="counter"></div>
 
-<button onclick="generateImage()">צור קומבו 🧨</button>
+<h2>✏ כתוב משהו ואני אקריא בקול קומי!</h2>
 
-<div id="result">
-  <img id="resultImage" />
-</div>
+<textarea id="textInput" placeholder="תכתוב פה משהו מצחיק..."></textarea><br>
+<button onclick="speakText()">🎤 הקרא בקול מצחיק</button>
+<button onclick="surprise()">🎉 כפתור הפתעה</button>
+
+<h2>🐾 גלריית הכיף</h2>
+
+<div id="gallery"></div>
 
 <script>
-const emojis = ["🐶","🐱","🐵","🕶️","👑","🔥","🎸"];
 
-const imageDatabase = {
-  "🐶": [
-    "https://i.imgur.com/2HPKOK7.jpg"
-  ],
-  "🐱": [
-    "https://i.imgur.com/phSfk2W.jpg"
-  ],
-  "🐶+🎸": [
-    "https://i.imgur.com/6Uw6HWF.jpg"
-  ],
-  "🐵": [
-    "https://i.imgur.com/oI4X50w.jpg"
-  ],
-  "RARE_MONKEY": [
-    "https://i.imgur.com/Z2Zy2FC.jpg"
-  ]
-};
+// מונה כניסות פשוט (לוקלי)
+let visits = localStorage.getItem("visits");
+if(!visits){ visits = 0; }
+visits++;
+localStorage.setItem("visits",visits);
+document.getElementById("counter").innerHTML =
+"👀 נכנסו לאתר שלך " + visits + " פעמים!";
 
-const grid = document.getElementById("emojiGrid");
-let selected = [];
+// רשימת 30 תמונות (חיות + ממים + אימוג'ים)
+const images = [
+"https://source.unsplash.com/300x300/?cute,dog",
+"https://source.unsplash.com/300x300/?funny,cat",
+"https://source.unsplash.com/300x300/?puppy",
+"https://source.unsplash.com/300x300/?kitten",
+"https://source.unsplash.com/300x300/?funny,monkey",
+"https://source.unsplash.com/300x300/?panda",
+"https://source.unsplash.com/300x300/?hamster",
+"https://source.unsplash.com/300x300/?baby,animal",
+"https://source.unsplash.com/300x300/?goat",
+"https://source.unsplash.com/300x300/?duck",
+"https://source.unsplash.com/300x300/?meme",
+"https://source.unsplash.com/300x300/?funny,face",
+"https://source.unsplash.com/300x300/?laugh",
+"https://source.unsplash.com/300x300/?emoji",
+"https://source.unsplash.com/300x300/?smile",
+"https://source.unsplash.com/300x300/?funny,dog",
+"https://source.unsplash.com/300x300/?cat,meme",
+"https://source.unsplash.com/300x300/?rabbit",
+"https://source.unsplash.com/300x300/?parrot",
+"https://source.unsplash.com/300x300/?hedgehog",
+"https://source.unsplash.com/300x300/?alpaca",
+"https://source.unsplash.com/300x300/?funny,animal",
+"https://source.unsplash.com/300x300/?dog,smile",
+"https://source.unsplash.com/300x300/?cat,funny",
+"https://source.unsplash.com/300x300/?laughing",
+"https://source.unsplash.com/300x300/?funny,baby",
+"https://source.unsplash.com/300x300/?seal",
+"https://source.unsplash.com/300x300/?red,panda",
+"https://source.unsplash.com/300x300/?goofy",
+"https://source.unsplash.com/300x300/?crazy,face"
+];
 
-emojis.forEach(e => {
-  const div = document.createElement("div");
-  div.className = "emoji";
-  div.textContent = e;
-  div.onclick = () => {
-    if (!selected.includes(e)) {
-      selected.push(e);
-      div.style.background = "gold";
-    }
-  };
-  grid.appendChild(div);
-});
+// יצירת גלריה דינמית (יוצר תחושה של הרבה תמונות)
+const gallery = document.getElementById("gallery");
 
-function generateImage() {
-  if (selected.length === 0) {
-    alert("בחר לפחות אימוג'י אחד 😅");
-    return;
-  }
-
-  const key = selected.sort().join("+");
-  let images;
-  let rare = false;
-
-  if (imageDatabase[key]) {
-    images = imageDatabase[key];
-    rare = true;
-  } else if (imageDatabase[selected[0]]) {
-    images = imageDatabase[selected[0]];
-  } else {
-    images = imageDatabase["🐶"];
-  }
-
-  if (Math.random() < 0.15) {
-    images = imageDatabase["RARE_MONKEY"];
-    rare = true;
-  }
-
-  const randomImage = images[Math.floor(Math.random() * images.length)];
-  const img = document.getElementById("resultImage");
-  img.src = randomImage;
-
-  if (rare) {
-    document.body.classList.add("rare-effect");
-    setTimeout(() => document.body.classList.remove("rare-effect"), 1800);
-    speakChinese("超级稀有组合!");
-  } else {
-    speakChinese("哈哈 太搞笑了");
-  }
-
-  selected = [];
-  document.querySelectorAll(".emoji").forEach(e =>
-    e.style.background = "rgba(0,0,0,0.5)"
-  );
+for(let i=0;i<100;i++){
+    const card = document.createElement("div");
+    card.className="card";
+    const img = document.createElement("img");
+    img.src = images[i % images.length];
+    card.appendChild(img);
+    gallery.appendChild(card);
 }
 
-function speakChinese(text) {
-  const msg = new SpeechSynthesisUtterance(text);
-  msg.lang = "zh-CN";
-  msg.pitch = 1.4;
-  msg.rate = 1;
-  speechSynthesis.speak(msg);
+// קריינות קומית
+function speakText(){
+    const text = document.getElementById("textInput").value;
+    const speech = new SpeechSynthesisUtterance(text);
+    speech.pitch = 0.6;   // עמוק
+    speech.rate = 0.85;   // איטי קצת
+    speech.volume = 1;
+    speech.lang = "he-IL";
+    window.speechSynthesis.speak(speech);
 }
+
+// כפתור הפתעה
+function surprise(){
+    alert("😂 הפתעה! אתה גאון!");
+}
+
 </script>
 
 </body>
